@@ -27,7 +27,7 @@ body {
   background-color: var(--main-bg-color);
 }
 .hangman__stats {
-  color: lightyellow;
+  color: var(--light-yellow);
   font-family: var(--font-body-stack);
 }
 .hangman__title {
@@ -48,6 +48,12 @@ body {
   text-align: center;
   margin: 1.5rem 0;
   letter-spacing: 0.6rem;
+}
+.hangman__instructions {
+  font-family: var(--font-body-stack);
+  text-align: center;
+  color: var(--light-yellow);
+  font-style: italic;
 }
 .hangman__instructions {
   font-family: var(--font-body-stack);
