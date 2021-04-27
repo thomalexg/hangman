@@ -1,143 +1,173 @@
-import Home from "./home.js";
-import {
-    sound
-} from './../data/sound.js'
+import { sound } from './../data/sound.js';
+import End from './end.js';
+import Home from './home.js';
 
-const Game = (_ => {
-    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    const wordcreater = _ => {
-        let wordlist = ("apple ball africa europe bali mountain surfing book laptop smartphone college university developer javascript java gum postcard pencil poland");
-        return wordlist.split(" ");
+const Game = ((_) => {
+  const letters = [
+    'a',
+    'b',
+    'c',
+    'd',
+    'e',
+    'f',
+    'g',
+    'h',
+    'i',
+    'j',
+    'k',
+    'l',
+    'm',
+    'n',
+    'o',
+    'p',
+    'q',
+    'r',
+    's',
+    't',
+    'u',
+    'v',
+    'w',
+    'x',
+    'y',
+    'z',
+  ];
+  const wordcreater = (_) => {
+    let wordlist =
+      'apple ball africa europe bali mountain surfing book laptop smartphone college university developer javascript java gum postcard pencil poland';
+    return wordlist.split(' ');
+  };
+  const words = wordcreater();
+  let chosenWord;
+  let guessingWord;
+  let lives;
+  let guesses;
+
+  //cache the DOM
+  const $hangman = document.querySelector('.hangman');
+
+  const init = (_) => {
+    // 1. choose a word
+    chosenWord = chooseWord();
+    // 2. build out our own word to render
+    guessingWord = Array(chosenWord.length).fill('_');
+    guesses = [];
+    lives = 7;
+    // 3. show initial screen or page
+    showInitPage();
+    listeners();
+    // Board.init();
+  };
+
+  const listeners = (_) => {
+    $hangman.addEventListener('click', (event) => {
+      if (event.target.matches('.hangman__letter')) {
+        sound.click.play();
+        check(event.target.innerHTML);
+      }
+      if (event.target.matches('.hangman__trigger')) {
+        sound.click.play();
+        Home.init();
+      }
+    });
+  };
+
+  const isAlreadyTaken = (letter) => {
+    return guesses.includes(letter);
+  };
+  const check = (guess) => {
+    if (isAlreadyTaken(guess)) return;
+
+    guesses.push(guess);
+
+    //check if the guess exists in chosenword
+    if (chosenWord.includes(guess)) {
+      // update the guessing word
+      updateGuessingWord(guess);
+    } else {
+      lives--;
+      // render the board accordingly
+      // Board.setLives(lives);
     }
-    const words = wordcreater();
-    let chosenWord;
-    let guessingWord;
-    let lives;
-    let guesses;
+    render();
+    // check if the game is over
+    isGameOver();
+  };
 
-    //cache the DOM
-    const $hangman = document.querySelector(".hangman");
+  const hasWon = (_) => guessingWord.join('') === chosenWord;
 
-    const init = _ => {
-        //1. choose a word
-        chosenWord = chooseWord();
-        //console.log(chosenWord);
-        //2. buils out our guessing word to render
-        guessingWord = Array(chosenWord.length).fill("_");
-        console.log(chosenWord);
-        //console.log(guessingWord);
-        guesses = [];
-        lives = 7;
-        // render page
-        showInitPage();
-        listeners();
+  const hasLost = (_) => lives <= 0;
+
+  const isGameOver = (_) => {
+    // if won, then alert("win");
+    if (hasWon()) {
+      sound.win.play();
+      End.render(true, chosenWord);
+      // End.setState({
+      //   chosenWord,
+      //   result: 'win',
+      // });
     }
-
-    const listeners = _ => {
-        $hangman.addEventListener("click", e => {
-            if (e.target.matches(".hangman__letter")) {
-                sound.click.play();
-                check(e.target.innerHTML);
-                //console.log(e.target.innerHTML);
-            }
-
-            if (e.target.matches(".hangman__trigger")) {
-                Home.init();
-                sound.click.play();
-            }
-        })
+    // if lost, then alert("lost");
+    if (hasLost()) {
+      sound.lose.play();
+      End.render(false, chosenWord);
+      // End.setState({
+      //   chosenWord,
+      //   result: 'lose',
+      // });
     }
+  };
 
-    const isAlreadyTaken = letter => {
-        return guesses.includes(letter);
-    }
+  const render = (_) => {
+    document.querySelector('.hangman__lives').innerHTML = lives;
+    document.querySelector('.hangman__word').innerHTML = guessingWord.join('');
+    document.querySelector('.hangman__letters').innerHTML = createLetters();
+  };
 
+  const updateGuessingWord = (letter) => {
+    chosenWord.split('').forEach((elem, index) => {
+      if (elem === letter) {
+        guessingWord[index] = elem;
+      }
+    });
+  };
 
-    const check = guess => {
-        if (chosenWord.includes(guess)) {
-            console.log("guessed right")
-        } else {
-            console.log("oops");
-            lives--;
-        }
-    }
-    //const check = guess => {
-    //    console.log("check");
-    //    if (isAlreadyTaken(guess)) return;
-    //
-    //    guesses.push(guess);
-    //
-    //    //check if the guess exists in chosenWord
-    //    if (chosenWord.includes(guess)) {
-    //        // update guessing word
-    //        console.log("hi");
-    //        updateGuessingWord(guess);
-    //        console.log(guessingWord);
-    //    } else {
-    //        lives--
-    //        // render the board
-    //
-    //    }
-    //    // render();
-    //    // check if game is over
-    //}
-
-    const updateGuessingWord = guess => {
-        console.log("updateGuessingWord")
-    }
-
-    //  const updateGuessingWord = letter => {
-    //      console.log("update guess works as well")
-    //      chosenWord.split("").forEach((elem, index) => {
-    //          if (elem === letter) {
-    //              console.log("elem=letter")
-    //              guessingWord[index] = elem;
-    //          }
-    //      }); 
-    //  }
-
-    const showInitPage = _ => {
-        let markup = `
+  const showInitPage = (_) => {
+    let markup = `
         <p class="hangman__stats">Lives:
             <span class="hangman__lives">${lives}</span>
         </p>
         <h1 class="hangman__title">Hangman</h1>
         <canvas class="hangman__board" height="155px"></canvas>
-        <div class="hangman__word">${guessingWord.join("")}</div>
+        <div class="hangman__word">${guessingWord.join('')}</div>
         <p class="hangman__instructions">Pick a letter below to guess the whole word.</p>
         <ul class="hangman__letters">
-        ${createLetters()}
+            ${createLetters()}
         </ul>
-        <button class="button hangman__trigger"> Main Menu</button>
-        `
-        return $hangman.innerHTML = markup;
-    }
+        <button class="button hangman__trigger">Main Menu</button>
+        `;
+    $hangman.innerHTML = markup;
+  };
 
-    const createLetters = _ => {
-        let markup = ``;
-        for (let letter of letters) {
-            markup += `
-            <li class="hangman__letter"> ${letter} </li>
-            `
-        }
-        return markup;
-    }
+  const createLetters = (_) => {
+    let markup = ``;
+    letters.forEach((letter) => {
+      const isActive = isAlreadyTaken(letter) ? 'hangman__letter--active' : '';
+      markup += `
+          <li class="hangman__letter ${isActive}">${letter}</li>
+          `;
+    });
+    return markup;
+  };
 
+  const chooseWord = (_) => {
+    let randNum = Math.floor(Math.random() * words.length);
+    return words[randNum];
+  };
 
-
-
-
-
-    const chooseWord = _ => {
-        let randomNumber = Math.floor(Math.random() * words.length);
-        return words[randomNumber];
-    }
-
-
-
-    return {
-        init
-    }
+  return {
+    init,
+  };
 })();
 
 export default Game;
