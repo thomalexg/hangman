@@ -1,4 +1,5 @@
 import { sound } from './../data/sound.js';
+import Board from './board.js';
 import End from './end.js';
 import Home from './home.js';
 
@@ -45,9 +46,11 @@ const Game = ((_) => {
   //cache the DOM
   const $hangman = document.querySelector('.hangman');
 
-  const init = (_) => {
+  const init = async (_) => {
     // 1. choose a word
-    chosenWord = chooseWord();
+    const word = await randomWord();
+    chosenWord = word;
+    // chosenWord = chooseWord();
     // 2. build out our own word to render
     guessingWord = Array(chosenWord.length).fill('_');
     guesses = [];
@@ -55,7 +58,7 @@ const Game = ((_) => {
     // 3. show initial screen or page
     showInitPage();
     listeners();
-    // Board.init();
+    Board.init();
   };
 
   const listeners = (_) => {
@@ -86,7 +89,7 @@ const Game = ((_) => {
     } else {
       lives--;
       // render the board accordingly
-      // Board.setLives(lives);
+      Board.setLives(lives);
     }
     render();
     // check if the game is over
@@ -102,19 +105,11 @@ const Game = ((_) => {
     if (hasWon()) {
       sound.win.play();
       End.render(true, chosenWord);
-      // End.setState({
-      //   chosenWord,
-      //   result: 'win',
-      // });
     }
     // if lost, then alert("lost");
     if (hasLost()) {
       sound.lose.play();
       End.render(false, chosenWord);
-      // End.setState({
-      //   chosenWord,
-      //   result: 'lose',
-      // });
     }
   };
 
@@ -158,6 +153,13 @@ const Game = ((_) => {
           `;
     });
     return markup;
+  };
+
+  const randomWord = async () => {
+    const response = await fetch('https://random-words-api.vercel.app/word');
+    const parsed = await response.json();
+    const word = parsed[0].word.toLowerCase();
+    return word;
   };
 
   const chooseWord = (_) => {
