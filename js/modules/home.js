@@ -9,7 +9,7 @@ const Home = ((_) => {
   const render = (_) => {
     let markup = '';
     markup += `
-    <h1 class="hangman__title">Hang Jana</h1>
+    <h1 class="hangman__title">Hangman</h1>
     <button class="button start">New Game</button>
     <button class="button instructions">Instructions</button>
     `;
@@ -22,9 +22,8 @@ const Home = ((_) => {
       sound.click.play();
     });
     document.querySelector('.instructions').addEventListener('click', (_) => {
-      // How.init();
-      // sound.click.play();
-      window.open('https://bitly.com/98K8eH', '_blank');
+      How.init();
+      sound.click.play();
     });
   };
 

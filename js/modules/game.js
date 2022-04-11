@@ -48,8 +48,7 @@ const Game = ((_) => {
 
   const init = async (_) => {
     // 1. choose a word
-    // const word = await randomWord();
-    const word = "Trampolinspringen";
+    const word = await randomWord();
     chosenWord = word;
     // chosenWord = chooseWord();
     // 2. build out our own word to render
@@ -84,7 +83,7 @@ const Game = ((_) => {
     guesses.push(guess);
 
     //check if the guess exists in chosenword
-    if (chosenWord.toLowerCase().includes(guess)) {
+    if (chosenWord.includes(guess)) {
       // update the guessing word
       updateGuessingWord(guess);
     } else {
@@ -116,13 +115,13 @@ const Game = ((_) => {
 
   const render = (_) => {
     document.querySelector('.hangman__lives').innerHTML = lives;
-    document.querySelector('.hangman__word').innerHTML = 'Gutschein zum ' + guessingWord.join('');
+    document.querySelector('.hangman__word').innerHTML = guessingWord.join('');
     document.querySelector('.hangman__letters').innerHTML = createLetters();
   };
 
   const updateGuessingWord = (letter) => {
     chosenWord.split('').forEach((elem, index) => {
-      if (elem.toLowerCase() === letter) {
+      if (elem === letter) {
         guessingWord[index] = elem;
       }
     });
@@ -133,9 +132,9 @@ const Game = ((_) => {
         <p class="hangman__stats">Lives:
             <span class="hangman__lives">${lives}</span>
         </p>
-        <h1 class="hangman__title">Hang Jana</h1>
+        <h1 class="hangman__title">Hangman</h1>
         <canvas class="hangman__board" height="155px"></canvas>
-        <div class="hangman__word">Gutschein zum ${guessingWord.join('')}</div>
+        <div class="hangman__word">${guessingWord.join('')}</div>
         <p class="hangman__instructions">Pick a letter below to guess the whole word.</p>
         <ul class="hangman__letters">
             ${createLetters()}
