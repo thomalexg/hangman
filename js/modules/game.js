@@ -156,9 +156,10 @@ const Game = ((_) => {
   };
 
   const randomWord = async () => {
-    const response = await fetch('https://random-words-api.vercel.app/word');
-    const parsed = await response.json();
-    const word = parsed[0].word.toLowerCase();
+    // const response = await fetch('https://random-words-api.vercel.app/word');
+    // const parsed = await response.json();
+    // const word = parsed[0].word.toLowerCase();
+    const word = "professionelle Massage"
     return word;
   };
 
